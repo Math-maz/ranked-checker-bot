@@ -14,8 +14,14 @@ client.on("message", async msg => {
     players.forEach(async playerID => {
       const response = await axios.get(formatLeagueAPIQuery(playerID));
       console.log(response.data);
-      const soloQStats = response.data[0];
-      const flexStats = response.data[1];
+      let soloQStats, flexStats;
+      if (response.data[0].queueType == "RANKED_FLEX_SR") {
+        flexStats = response.data[0];
+        soloQStats = response.data[1];
+      } else {
+        flexStats = response.data[1];
+        soloQStats = response.data[0];
+      }
       const { summonerName } = response.data[0];
       const embed = new MessageEmbed()
         .setTitle(summonerName)
@@ -25,13 +31,13 @@ client.on("message", async msg => {
             (soloQStats.wins / (soloQStats.wins + soloQStats.losses)) * 100
           )}%`
         )
-        .setColor("#ddd")
         .addField(
           "Flex",
           `Tier: ${flexStats.tier}-${flexStats.rank}\nWinRate: ${Math.floor(
             (flexStats.wins / (flexStats.wins + flexStats.losses)) * 100
           )}%`
-        );
+        )
+        .setColor("#ddd");
 
       await msg.channel.send(embed);
     });
