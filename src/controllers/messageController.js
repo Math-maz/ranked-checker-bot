@@ -23,13 +23,17 @@ module.exports = {
           .setTitle(summonerName)
           .addField(
             "Solo/Duo",
-            `Tier: ${soloQStats.tier}-${soloQStats.rank}\nWinRate: ${Math.floor(
+            `Tier: ${soloQStats.tier}-${soloQStats.rank} ${
+              soloQStats.miniSeries ? `(${soloQStats.miniSeries.progress})` : ""
+            }\nWinRate: ${Math.floor(
               (soloQStats.wins / (soloQStats.wins + soloQStats.losses)) * 100
             )}%`
           )
           .addField(
             "Flex",
-            `Tier: ${flexStats.tier}-${flexStats.rank}\nWinRate: ${Math.floor(
+            `Tier: ${flexStats.tier}-${flexStats.rank} ${
+              flexStats.miniSeries ? `(${flexStats.miniSeries.progress})` : ""
+            }\nWinRate: ${Math.floor(
               (flexStats.wins / (flexStats.wins + flexStats.losses)) * 100
             )}%`
           )
