@@ -1,46 +1,12 @@
 require("dotenv/config");
-const { Client, MessageEmbed } = require("discord.js");
+const { Client } = require("discord.js");
 const client = new Client();
-const axios = require("axios");
-const { formatLeagueAPIQuery } = require("./util/helpers");
-const players = require("./util/players");
+
+const messageController = require("./controllers/messageController");
 client.on("ready", () => {
   console.log("i'm ready to interact!");
+  client.user.setActivity({ name: "!ranked-check", type: "LISTENING" });
 });
-client.on("message", async msg => {
-  if (msg.content === "!ranked-check") {
-    await msg.reply("Perfoming ranked check on everybody!");
 
-    players.forEach(async playerID => {
-      const response = await axios.get(formatLeagueAPIQuery(playerID));
-      console.log(response.data);
-      let soloQStats, flexStats;
-      if (response.data[0].queueType == "RANKED_FLEX_SR") {
-        flexStats = response.data[0];
-        soloQStats = response.data[1];
-      } else {
-        flexStats = response.data[1];
-        soloQStats = response.data[0];
-      }
-      const { summonerName } = response.data[0];
-      const embed = new MessageEmbed()
-        .setTitle(summonerName)
-        .addField(
-          "Solo/Duo",
-          `Tier: ${soloQStats.tier}-${soloQStats.rank}\nWinRate: ${Math.floor(
-            (soloQStats.wins / (soloQStats.wins + soloQStats.losses)) * 100
-          )}%`
-        )
-        .addField(
-          "Flex",
-          `Tier: ${flexStats.tier}-${flexStats.rank}\nWinRate: ${Math.floor(
-            (flexStats.wins / (flexStats.wins + flexStats.losses)) * 100
-          )}%`
-        )
-        .setColor("#ddd");
-
-      await msg.channel.send(embed);
-    });
-  }
-});
+client.on("message", messageController.messageManager);
 client.login(process.env.TOKEN);
