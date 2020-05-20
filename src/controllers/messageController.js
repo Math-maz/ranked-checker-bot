@@ -4,10 +4,10 @@ const parseArgs = require("minimist");
 const { MessageEmbed } = require("discord.js");
 const {
   formatLeagueAPIQuery,
-  formatSummonerLeagueAPIQuery
+  formatSummonerLeagueAPIQuery,
 } = require("../util/helpers");
 module.exports = {
-  messageManager: async msg => {
+  messageManager: async (msg) => {
     const messageArr = msg.content.split(" ");
     const parsedMsg = parseArgs(messageArr);
     const command = parsedMsg._[0];
@@ -15,7 +15,8 @@ module.exports = {
 
     if (command === "!ranked-check") {
       await msg.reply("Performing ranked check on everybody!");
-      players.forEach(async playerID => {
+      players.forEach(async (playerID) => {
+        console.log(formatLeagueAPIQuery(playerID));
         const response = await axios.get(formatLeagueAPIQuery(playerID));
         let soloQStats, flexStats;
         if (response.data[0].queueType == "RANKED_FLEX_SR") {
@@ -55,10 +56,11 @@ module.exports = {
         }
         await msg.channel.send(embed);
       });
-    } else if (command === "!single-check") {
+    } else if (command === "!check") {
       if (nick) {
         try {
           await msg.reply(`Performing ranked check for ${nick}`);
+
           const summonerResponse = await axios.get(
             formatSummonerLeagueAPIQuery(nick)
           );
@@ -113,5 +115,5 @@ module.exports = {
         }
       }
     }
-  }
+  },
 };
