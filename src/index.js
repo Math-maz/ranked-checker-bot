@@ -6,8 +6,8 @@ const { messageManager } = require("./controllers/messageController");
 client.on("ready", () => {
   console.log("i'm ready to interact!");
   client.user.setActivity({
-    name: "!ranked-check and !single-check NICK",
-    type: "LISTENING"
+    name: "!check *insert player nick without spaces*",
+    type: "LISTENING",
   });
 });
 
